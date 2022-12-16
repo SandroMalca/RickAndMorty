@@ -1,0 +1,6 @@
+.cards{
+    display: flex;
+    padding: 15px;
+    border: 2px solid rgba(245, 245, 245, 0.311);
+    border-radius: 5px;
+}
