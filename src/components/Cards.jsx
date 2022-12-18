@@ -8,12 +8,13 @@ export default function Cards(props) {
       {
          characters.map((c)=>{
             return(
-            <Card 
+            <Card
+            id={c.id}
             name={c.name}
             species={c.species}
             gender={c.gender}
             image={c.image}
-            onClose={() => window.alert('Emulamos que se cierra la card')}></Card>
+            onClose={()=>props.onClose(c.id)}></Card>
             );
          })}
    </div>);

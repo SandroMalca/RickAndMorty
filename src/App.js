@@ -1,36 +1,48 @@
+import { useState } from 'react'
 import styles from './App.module.css'
-//import Card from './components/Card.jsx'
 import Cards from './components/Cards.jsx'
 import NavBar from './components/NavBar.jsx'
-import characters from './data.js'
+import About from './components/About.jsx'
+import Detail from './components/Detail.jsx'
+import Login from "./components/Login"
+import {Routes, Route} from 'react-router-dom'
 
 function App () {
-
+  const [characters,setCharacters] = useState([])
   function onSearch(id){
-    alert(id)
+    fetch(`https://rickandmortyapi.com/api/character/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+         if (data.name) {
+          let exist= characters.find((e)=>e.id === data.id)
+          if(exist){
+            alert("Ese personaje ya existe")
+          }else{
+            setCharacters((oldChars) => [...oldChars,data]);
+          }            
+         } else {
+            window.alert('No hay personajes con ese ID');
+         }
+      });  
+  }
+
+  function onClose(id){
+    setCharacters((data)=>{
+      return data.filter((e)=> e.id !== id)
+    })
   }
   return (
     <div className={styles.App} style={{ padding: '25px' }}>
       <div className={styles.container}>
-        <NavBar
-          onSearch={onSearch}
-        />      
-        {/* <div id="rick">
-        <Card
-          name={Rick.name}
-          species={Rick.species}
-          gender={Rick.gender}
-          image={Rick.image}
-          onClose={() => window.alert('Emulamos que se cierra la card')}
-        />
-        </div> */}
-        <hr />
         <div>
-          <Cards
-            characters={characters}
-          />
+          <NavBar onSearch={onSearch}/>
         </div>
-        <hr />      
+        <Routes>
+          <Route path="/" element={<Login/>}></Route>
+          <Route path="/home" element={<Cards characters={characters} onClose={onClose} />}></Route>
+          <Route path="/about" element={<About/>}></Route>
+          <Route path="/detail/:detailId" element={<Detail/>}></Route>          
+        </Routes>
       </div>
     </div>
   )
