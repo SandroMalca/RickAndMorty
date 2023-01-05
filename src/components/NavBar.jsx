@@ -3,6 +3,7 @@ import SearchBar from "./SearchBar"
 import styles from "./NavBar.module.css"
 import { Link } from 'react-router-dom'
 
+
 export default function NavBar(props) {
   return (
     <div className={styles.nav}>
@@ -17,8 +18,16 @@ export default function NavBar(props) {
           </Link>
         </div>
         <div>
+          <Link to="/favorites"> 
+            <button>Favorites</button>
+          </Link>
+        </div>
+        <div>
             <SearchBar onSearch={props.onSearch}/>
         </div>
     </div>
   )
 }
+
+
+

@@ -5,14 +5,17 @@ import NavBar from './components/NavBar.jsx'
 import About from './components/About.jsx'
 import Detail from './components/Detail.jsx'
 import Form from './components/Form'
+import Favorites from './components/Favoritos/Favorites'
 import {Routes, Route,useLocation, useNavigate} from 'react-router-dom'
 
 function App () {
+  // Declaración de variables de estado
   const [characters,setCharacters] = useState([])
   const [access, setAccess]=useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   
+  // funciones 
 
   useEffect(()=>{
     !access && navigate("/")
@@ -20,7 +23,7 @@ function App () {
   },[access])
   
 
-  const username = "sandro@soyhenry.com"
+  const username = "sandro@hola.com"
   const password = "1sandro"
 
   function login (userData){
@@ -52,15 +55,17 @@ function App () {
       return data.filter((e)=> e.id !== id)
     })
   }
+  // renderización
   return (
-    <div className={styles.App} style={{ padding: '25px' }}>
+    <div className={styles.App}>
       {location.pathname !== "/" && <NavBar onSearch={onSearch}/>}
-      <div className={styles.container}>
+      <div>
         <Routes>
           <Route path="/" element={<Form login={login}/>}></Route>
           <Route path="/home" element={<Cards characters={characters} onClose={onClose} />}></Route>
           <Route path="/about" element={<About/>}></Route>
-          <Route path="/detail/:detailId" element={<Detail/>}></Route>          
+          <Route path="/detail/:detailId" element={<Detail/>}></Route>       
+          <Route path='/favorites' element={<Favorites characters={characters} onClose={onClose} />}></Route>
         </Routes>
       </div>
     </div>

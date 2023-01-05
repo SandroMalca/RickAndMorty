@@ -49,10 +49,10 @@ export default function Form(props) {
     
   return (
     <form className={styles.cont} onSubmit={handleSubmit}>
-        <label className={styles.username} htmlFor="username" name="username">Username: </label>
+        <label htmlFor="username" name="username">Username: </label>
         <input type='text' name="username" value={userData.username} onChange={(e)=> handleInputsChange(e)} />
         <p className={styles.alerta}>{errors.username && errors.username}</p>
-        <label className={styles.pass} htmlFor="password" name="password">Password: </label>
+        <label htmlFor="password" name="password">Password: </label>
         <input type='password' name="password" value={userData.password} onChange={(e)=> handleInputsChange(e)} />
         <p className={styles.alerta}>{errors.password && errors.password}</p>
         <button type='submit'>Ingresar</button>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 export default function SearchBar(props) {
    const [character,setCharacter] = useState("")
+   
    function handleInput(event){
       setCharacter(event.target.value)
    }
