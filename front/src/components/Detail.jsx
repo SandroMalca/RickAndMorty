@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import styles from './Detail.module.css'
-import { useParams } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import styles from "./Detail.module.css";
+import { useParams } from "react-router-dom";
 
 export default function Detail() {
-const {detailId} = useParams();
-const [character,setCharacter] = useState({})
-console.log(detailId)
-
-useEffect(() => {
-    fetch(`https://rickandmortyapi.com/api/character/${detailId}`)
+  const { detailId } = useParams();
+  const [character, setCharacter] = useState({});
+  console.log(detailId);
+  useEffect(() => {
+    fetch(`http://localhost:3001/onsearch/${detailId}`)
       .then((response) => response.json())
       .then((char) => {
         if (char.name) {
+          console.log("------>", char);
           setCharacter(char);
         } else {
           window.alert("No hay personajes con ese ID");
@@ -22,17 +22,24 @@ useEffect(() => {
       });
     return setCharacter({});
   }, [detailId]);
-
   return (
     <div className={styles.detail}>
-        <div className={styles.txt}>
-            <h1>{character.name}</h1>
-            <h3>{character.status}</h3>
-            <p>{character.species}</p>
-            <p>{character.gender}</p>
-            <p>{character.origin?.name}</p>
-        </div>
-        <img className={styles.imgD} src={character.image} alt={character.image} />
+      <div className={styles.txt}>
+        <h1>{character.name}</h1>
+        <h3>{character.status}</h3>
+        <p>{character.species}</p>
+        <p>{character.gender}</p>
+        <p>{character.origin?.name}</p>
+      </div>
+      <img className={styles.imgD} src={character.image} alt={character.name} />
     </div>
-  )
+  );
 }
+/*
+Name
+Status
+Specie
+Gender
+Origin
+Image
+*/
