@@ -8,6 +8,7 @@ import Detail from "./components/Detail.jsx";
 import Favorites from "./components/Favorites.jsx";
 import Portfolio from "./components/Portfolio.jsx";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function App() {
   const [access, setAccess] = useState(false);
@@ -40,21 +41,25 @@ Una variable "password", y que sea igual a una contraseña.
   const location = useLocation();
   // console.log("location ->", location);
   const [characters, setCharacters] = useState([]);
-  function onSearch(id) {
-    fetch(`http://localhost:3001/onsearch/${id}`) // `http://localhost:3001/rickandmorty/${id}`
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.name) {
-          let exist = characters.find((e) => e.id === data.id);
-          if (exist) {
-            alert("ese personaje ya existe");
-          } else {
-            setCharacters((oldChars) => [...oldChars, data]);
-          }
+  async function onSearch(id) {
+    try {
+      const result = await axios(
+        `http://localhost:3001/rickandmorty/character/${id}`
+      );
+      let character = result.data;
+      if (character.name) {
+        let exist = characters.find((e) => e.id === character.id);
+        if (exist) {
+          alert("ese personaje ya existe");
         } else {
-          window.alert("No hay personajes con ese ID");
+          setCharacters((oldChars) => [...oldChars, character]);
         }
-      });
+      } else {
+        window.alert("No hay personajes con ese ID");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function onClose(id) {
@@ -66,28 +71,31 @@ Una variable "password", y que sea igual a una contraseña.
   }
   return (
     // console.log("chars", characters),
-    (
-      <div className={styles.App}>
-        <div className={styles.container}>
-          <div className={styles.top}></div>
+    <div className={styles.App}>
+      <div className={styles.container}>
+        <div className={styles.top}></div>
 
-          <div>
-            {location.pathname === "/" ? null : <NavBar logout={logout} onSearch={onSearch} />}
-          </div>
-          <Routes>
-            <Route path="/" element={<Form login={login} />}></Route>
-            <Route
-              path="/home"
-              element={<Cards characters={characters} onClose={onClose} />}
-            ></Route>
-            <Route path="/about" element={<About />}></Route>
-            <Route path="/portfolio" element={<Portfolio />}></Route>
-            <Route path="/favorites" element={<Favorites characters={characters} onClose={onClose}/>}></Route>
-            <Route path="/detail/:detailId" element={<Detail />}></Route>
-          </Routes>
+        <div>
+          {location.pathname === "/" ? null : (
+            <NavBar logout={logout} onSearch={onSearch} />
+          )}
         </div>
+        <Routes>
+          <Route path="/" element={<Form login={login} />}></Route>
+          <Route
+            path="/home"
+            element={<Cards characters={characters} onClose={onClose} />}
+          ></Route>
+          <Route path="/about" element={<About />}></Route>
+          <Route path="/portfolio" element={<Portfolio />}></Route>
+          <Route
+            path="/favorites"
+            element={<Favorites characters={characters} onClose={onClose} />}
+          ></Route>
+          <Route path="/detail/:detailId" element={<Detail />}></Route>
+        </Routes>
       </div>
-    )
+    </div>
   );
 }
 

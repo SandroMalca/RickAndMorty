@@ -1,61 +1,70 @@
-import React,{useState} from 'react'
-import styles from "./Form.module.css"
-
+import React from "react";
+import { Link } from "react-router-dom";
+import styles from "./Form.module.css";
+import validate from "./validate";
 
 export default function Form(props) {
-    const [userData,setUserData] = useState({
-        username:"",
-        password:""
-    })
-    const [errors,setError] = useState({
-        username:"",
-        password:""
-    })
-    const validate=(e)=>{
-        let errors ={}
-        const regexEmail=/\S+@\S+\.\S+/
-        const regexPass = new RegExp(
-            "^(?=[A-Za-z]+[0-9]|[0-9]+[A-Za-z])[A-Za-z0-9]{6,10}$");
-
-        if(!regexEmail.test(e.username)){
-            errors.username="Ingrese un email correcto"
-        }    
-        if(!e.username){
-            errors.username="Agregar un nuevo username"
-        }
-        if(e.username.length > 35){
-            errors.username="Max 35 caracteres"
-        }
-        if(!regexPass.test(e.password)){
-            errors.password="Ingresar de 6-10 caracteres"
-        }
-        return errors
-    }
-
-    const handleInputsChange=(e)=>{
-        setError(validate({
-            ...userData,
-            [e.target.name]:e.target.value
-        }))
-        setUserData({
-            ...userData,
-            [e.target.name]:e.target.value
-        })
-    }
-    const handleSubmit=(e)=>{
-        e.preventDefault()   
-        props.login(userData)      
-    }
-    
+  const [userData, setUserData] = React.useState({
+    username: "",
+    password: "",
+  });
+  const [errors, setErrors] = React.useState({ username: "", password: "" });
+  function handleInputChange(e) {
+    setUserData({
+      ...userData,
+      [e.target.name]: e.target.value,
+    });
+    setErrors(
+      validate({
+        // si entra a ese if del validate -> {username: "El username no debe estar vacío"}
+        ...userData,
+        [e.target.name]: e.target.value,
+      })
+    ); // errors => {username: "El username no debe estar vacío"}
+  }
+  function handleSubmit(e) {
+    e.preventDefault();
+    props.login(userData);
+  }
   return (
-    <form className={styles.cont} onSubmit={handleSubmit}>
-        <label htmlFor="username" name="username">Username: </label>
-        <input type='text' name="username" value={userData.username} onChange={(e)=> handleInputsChange(e)} />
-        <p className={styles.alerta}>{errors.username && errors.username}</p>
-        <label htmlFor="password" name="password">Password: </label>
-        <input type='password' name="password" value={userData.password} onChange={(e)=> handleInputsChange(e)} />
-        <p className={styles.alerta}>{errors.password && errors.password}</p>
-        <button type='submit'>Ingresar</button>
-    </form>
-  )
+    <div>
+      <form
+        onSubmit={(e) => {
+          handleSubmit(e);
+        }}
+      >
+        <div className={styles.container}>
+          <div className={styles.form_group}>
+            <label>Username</label>
+            <input
+              className={errors.username && styles.warning}
+              type="text"
+              name="username"
+              placerholder="Enter username"
+              onChange={(e) => handleInputChange(e)}
+            ></input>
+            <p className={styles.danger}>{errors.username}</p>
+          </div>
+          <div className={styles.form_group}>
+            <label>Password</label>
+            <input
+              type="text"
+              name="password"
+              placerholder="Enter password"
+              onChange={(e) => handleInputChange(e)}
+            ></input>
+            <p className={styles.danger}>{errors.password}</p>
+          </div>
+          {/* {Object.keys(errors).length === 0 ? <button type="submit">Log In</button> :null} */}
+          <button type="submit">Log In</button>
+        </div>
+      </form>
+    </div>
+  );
 }
+
+/*
+Primero agregaremos una etiqueta <div /> que envolverá a todo el componente. 
+Tiene que haber una etiqueta <label /> y una <input /> tanto para el username como para la password. 
+Por último, agrega una etiqueta <button />.
+*/

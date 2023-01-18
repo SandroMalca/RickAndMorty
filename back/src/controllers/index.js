@@ -1,51 +1,71 @@
 const axios = require("axios");
+var fav = []
 
-const getCharById = function (res, id) {
-  axios(`https://rickandmortyapi.com/api/character/${id}`) 
-    .then((data) => data.data)
-    .then((data) => {
+const getFav = async function (req, res) {
+  res.status(200).end(JSON.stringify(fav))
+
+};
+const postFav = function (req, res) {
+  fav.push(req.body)
+  console.log("post fav -> ", fav)
+  res.status(200).end(JSON.stringify(req.body))
+};
+const deleteFavId = function (req, res) {
+  const { id } = req.params;
+  const character = fav.find(c=> c.id ===Number(id))
+  if(character){
+    fav = fav.filter(e=> e.id !== Number(id))
+    console.log("delete fav -> ", fav)
+    res.status(200).end(JSON.stringify(character))
+  } else {
+    res.status(400).end("este character ya no se encuentra en fav")
+  }
+};
+
+const getCharacterId = async function (req, res) {
+  const { id } = req.params;
+  const result = await axios(`https://rickandmortyapi.com/api/character/${id}`)
+  const characterApi = result.data
+    try{
       const character = {
-        image: data.image,
-        name: data.name,
-        gender: data.gender,
-        species: data.species,
-        id: data.id,
+        image: characterApi.image,
+        name: characterApi.name,
+        gender: characterApi.gender,
+        species: characterApi.species,
+        id: characterApi.id,
       };
-      res.writeHead(200, { "Content-type": "application/json" });
-      res.end(JSON.stringify(character));
-    })
-    .catch((error) => {
-      res.writeHead(500, { "Content-type": "text/plain" });
-      res.end("not found character");
-    });
-};
+      res.status(200).end(JSON.stringify(character));
+  
+    }catch(error){
+      res.status(500).end("not found character",error);   
+    };
+  }
 
-const getCharDetail = function (res, id) {
-    axios(`https://rickandmortyapi.com/api/character/${id}`) 
-      .then((data) => data.data)
-      .then((data) => {
-        // console.log(data)
-        const character = {
-          image: data.image,
-          name: data.name,
-          gender: data.gender,
-          species: data.species,
-          id: data.id,
-          status:data.status,
-          origin:data.origin
-        };
-        res.writeHead(200, { "Content-type": "application/json" });
-        res.end(JSON.stringify(character));
-      })
-      .catch((error) => {
-        res.writeHead(500, { "Content-type": "text/plain" });
-        res.end("not found character");
-      });
-  };
+const getDetailId = async function (req, res) {
+  const { detailId } = req.params;
+  const result= await axios(`https://rickandmortyapi.com/api/character/${detailId}`)
+  const characterDetail = result.data
+    try{    
+      const character = {
+        image: characterDetail.image,
+        name: characterDetail.name,
+        gender: characterDetail.gender,
+        species: characterDetail.species,
+        id: characterDetail.id,
+        status: characterDetail.status,
+        origin: characterDetail.origin,
+      };
+      res.status(200).end(JSON.stringify(character))
+    }catch(error) {
+      res.status(500).end("not found character",error);
+    }
+  }
+
+
 module.exports = {
-  getCharById,
-  getCharDetail
+  getCharacterId,
+  getDetailId,
+  getFav,
+  postFav,
+  deleteFavId,
 };
-
-
-

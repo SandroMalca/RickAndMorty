@@ -1,36 +1,63 @@
-import { ADD_CHAR, DELETE_CHAR, FILTER, ORDER } from "./actions"
-const initialState={
-    myFavorites:[],
-    allCharacters:[]
-}
-// eslint-disable-next-line
-export default (state = initialState, action) => {
-  switch (action.type) {
+import {
+  ADD_FAVORITES,
+  DELETE_FAVORITES,
+  ORDER,
+  FILTER,
+  RESET
+} from "./action_type";
 
-  case ADD_CHAR:
-    console.log("PAYLOAD_ADD-->",action.payload)
-    return { ...state,
-            myFavorites: [...state.allCharacters, action.payload ],
-            allCharacters: [...state.myFavorites, action.payload]
-           }
-  case DELETE_CHAR:
-    return {...state,
-            myFavorites: state.myFavorites.map((e)=>{
-                return e.id !== action.payload.id;
-            })}  
-            
-  case FILTER:
-    return{...state,
-      // eslint-disable-next-line
-      myFavorites: state.allCharacters.filter((e)=>action.payload === e.gender)}      
+const initialState = {
+  myFavorites: [],
+  myFavoritesOrigin: [],
+};
+
+export default function rootReducer(state = initialState, { type, payload }) {
+  switch (type) {
+    case ADD_FAVORITES:
+      return {
+        ...state,
+        myFavorites: [...state.myFavoritesOrigin, payload],
+        myFavoritesOrigin: [...state.myFavoritesOrigin, payload],
+      };
+    case DELETE_FAVORITES:
+      const filtered = state.myFavorites.filter((ch) => {
+        return ch.id !== payload;
+      });
+      return {
+        ...state,
+        myFavorites: filtered,
+        myFavoritesOrigin: filtered,
+      };
+    case FILTER:
+      const filterCopy = [...state.myFavoritesOrigin];
+      const filter = filterCopy.filter((ch) => ch.gender === payload);
+      return {
+        ...state,
+        myFavorites: filter,
+      };
     case ORDER:
-    // eslint-disable-next-line
-    return {...state,
-        myFavorites: action.payload === "Ascendente" ?
-       [...state.allCharacters.sort((a,b) => a.id-b.id)]:
-       [...state.allCharacters.sort((a,b) => b.id-a.id)]}
-  default:
-    return {...state}
+      const orderCopy = [...state.myFavoritesOrigin];
+      // console.log("payload", payload);
+      const order = orderCopy.sort((a, b) => {
+        if (a.id > b.id) {
+          return "Ascendente" === payload ? 1 : -1;
+        }
+        if (a.id < b.id) {
+          return "Descendente" === payload ? 1 : -1;
+        }
+        return 0;
+      });
+      return {
+        ...state,
+        myFavorites: order,
+      };
+      case RESET:
+      return {
+        ...state,
+        myFavorites: [...state.myFavoritesOrigin],
+      };
+
+    default:
+      return state;
   }
 }
-
